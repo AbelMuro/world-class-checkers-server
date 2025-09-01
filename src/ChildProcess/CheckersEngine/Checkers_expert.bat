@@ -1,1 +1,0 @@
-Main.exe 5 human
