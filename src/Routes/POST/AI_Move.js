@@ -16,17 +16,16 @@ router.post('/ai_move', (req, res) => {
 
     try{
         const enginePath = path.resolve(__dirname, '../../ChildProcess/CheckersEngine/Main.exe');      
-        const engine = spawn(enginePath, ['bot', '3', '10']);
+        const engine = spawn(enginePath, ['-pdn', PDN]);
         let output = '';
 
-        engine.stdin.write(`${PDN}\n`);             //we start by sending the current board positionals to the engine
-        engine.stdin.end();
-
         engine.stdout.on('data', (data) => {        //reading the data from the engine
+            console.log('data collected')
             output += data.toString();
         })
 
         engine.stdout.on('end', () => {             //once the engine finishes, we send the result as a response to the front end
+            console.log('finished reading data')
             res.status(200).send(output.trim());
         })
 
