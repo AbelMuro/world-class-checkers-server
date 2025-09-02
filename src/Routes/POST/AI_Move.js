@@ -15,8 +15,11 @@ router.post('/ai_move', (req, res) => {
     const PDN = ConvertToPDN(board);
  
     try{
-        const enginePath = path.resolve(__dirname, '../../ChildProcess/CheckersEngine/');      
-        const engine = spawn(enginePath, ['3', '10']);
+        const enginePath = path.resolve(__dirname, '../../ChildProcess/CheckersEngine');      
+        const engine = spawn('./checkersEngine.pyc', [], {
+            cwd: enginePath,
+            stdio: 'inherit'
+        });
         let output = '';
 
         engine.stdin.write(`${PDN}\n`);             //we start by sending the current board positionals to the engine
