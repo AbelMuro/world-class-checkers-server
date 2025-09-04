@@ -5,8 +5,8 @@ const path = require('path');
 const ConvertToPDN = require('../../ChildProcess/Utility/ConvertToPDN');
 
 /* 
-    this is where i left off, i need to find a checkers engine that can be used as
-    a child process in node.js
+    this is where i left off, i need to compile the stockfish-checkers engine repo 
+    and get the .exe file that i can use to run a child process
 */
 
 
@@ -15,33 +15,19 @@ router.post('/ai_move', (req, res) => {
     const PDN = ConvertToPDN(board);
  
     try{
-        const enginePath = path.resolve(__dirname, '../../ChildProcess/CheckersEngine');      
-        const engine = spawn('./checkersEngine.pyc', [], {
-            cwd: enginePath,
-            stdio: 'inherit'
-        });
-        let output = '';
+        const enginePath = path.resolve(__dirname, '../../ChildProcess/CheckersEngine/MarcherEngine.exe');
+        const child = spawn(enginePath);
 
-        engine.stdin.write(`${PDN}\n`);             //we start by sending the current board positionals to the engine
-        engine.stdin.end();
-
-        engine.stdout.on('data', (data) => {        //reading the data from the engine
-            console.log('data collected');
-            output += data.toString();
-        })
-
-        engine.stdout.on('end', () => {             //once the engine finishes, we send the result as a response to the front end
-            console.log('finished reading data');
-            res.status(200).send(output.trim());
-        })
-
-        engine.stderr.on('data', (error) => {       // we handle errors here
-            console.error('Engine error:', error.toString());
-            res.status(501).send(error.toString());
+        child.stdout.on('data', (data) => {
+            console.log(`Output: ${data}`);
         });
 
-        engine.on('close', (code) => {
-            console.log(`Engine exited with code ${code}`);
+        child.stderr.on('data', (data) => {
+            console.error(`Error: ${data}`);
+        });
+
+        child.on('close', (code) => {
+            console.log(`Child exited with code ${code}`);
         });
     }
     catch(error){
