@@ -8,9 +8,10 @@ const ConvertMovesToSSN = require('./Utility/ConvertMovesToSSN');
 router.post('/ai_move', (req, res) => {
     const {moves} = req.body;
     const allSSNMoves = ConvertMovesToSSN(moves);
+    console.log(allSSNMoves);
  
     try{
-        const enginePath = path.resolve(__dirname, './../../ChildProcess/CheckersEngine/stockfishWindows.exe');
+        const enginePath = path.resolve(__dirname, './../../ChildProcess/CheckersEngine/stockfishMacOS');
         const engine = spawn(enginePath);
 
         engine.stdin.write('uci\n');
@@ -19,14 +20,13 @@ router.post('/ai_move', (req, res) => {
 
         engine.stdout.on('data', (data) => {
             const output = data.toString();
-            console.log(output)
             if(output.includes('readyok')){
                 engine.stdin.write(`position startpos moves ${allSSNMoves}\n`);
                 engine.stdin.write('go movetime 1000\n');
             }  
             else if(output.includes('bestmove')){
                 const bestmove = output.slice(output.indexOf('bestmove'), output.length);
-                res.status(200).send(bestmove);                    
+                res.status(200).send(bestmove.split(' ')[1]);                    
             }
         
         });
