@@ -2,19 +2,15 @@ const express = require('express');
 const router = express.Router();
 const {spawn} = require('child_process');
 const path = require('path');
-const ConvertToFen = require('./Utility/ConvertToFen.js');
-
-/* 
-    this is where i left off, i need to better understand the position command that i write
-    to the stockfish engine
-*/
+const ConvertMovesToSSN = require('./Utility/ConvertMovesToSSN');
 
 
 router.post('/ai_move', (req, res) => {
-    const {} = req.body;
+    const {moves} = req.body;
+    const allSSNMoves = ConvertMovesToSSN(moves);
  
     try{
-        const enginePath = path.resolve(__dirname, '../../ChildProcess/CheckersEngine/stockfish');
+        const enginePath = path.resolve(__dirname, './../../ChildProcess/CheckersEngine/stockfishWindows.exe');
         const engine = spawn(enginePath);
 
         engine.stdin.write('uci\n');
@@ -23,12 +19,16 @@ router.post('/ai_move', (req, res) => {
 
         engine.stdout.on('data', (data) => {
             const output = data.toString();
+            console.log(output)
             if(output.includes('readyok')){
-                engine.stdin.write('position startpos moves e3-d4 d6-c5\n');
+                engine.stdin.write(`position startpos moves ${allSSNMoves}\n`);
                 engine.stdin.write('go movetime 1000\n');
             }  
-            else if(output.includes('bestmove'))
-                res.status(200).send(output);            
+            else if(output.includes('bestmove')){
+                const bestmove = output.slice(output.indexOf('bestmove'), output.length);
+                res.status(200).send(bestmove);                    
+            }
+        
         });
 
         engine.stderr.on('data', (data) => {
