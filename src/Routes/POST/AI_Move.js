@@ -2,12 +2,18 @@ const express = require('express');
 const router = express.Router();
 const {spawn} = require('child_process');
 const path = require('path');
-const ConvertMovesToSSN = require('./Utility/ConvertMovesToSSN');
+const ConvertToFen = require('./Utility/ConvertToFen');
+const ConvertAlgebraicToCheckers = require('./Utility/ConvertAlgebraicToCheckers');
 
+/*
+    this is where i left off, i need to continue to find a way to use stockfish for a checkers match
+
+*/
 
 router.post('/ai_move', (req, res) => {
-    const {moves} = req.body;
-    const allSSNMoves = ConvertMovesToSSN(moves);
+    const {board} = req.body;
+    const FEN = ConvertToFen(board);
+    console.log(FEN)
  
     try{
         const enginePath = path.resolve(__dirname, './../../ChildProcess/CheckersEngine/stockfishWindows.exe');
@@ -21,14 +27,15 @@ router.post('/ai_move', (req, res) => {
             const output = data.toString();
             console.log(output)
             if(output.includes('readyok')){
-                engine.stdin.write(`position startpos moves ${allSSNMoves}\n`);
+                engine.stdin.write(`position ${FEN}\n`);
                 engine.stdin.write('go movetime 1000\n');
             }  
             else if(output.includes('bestmove')){
-                const bestmove = output.slice(output.indexOf('bestmove'), output.length);
-                res.status(200).send(bestmove);                    
+                const bestmoveOutput = output.slice(output.indexOf('bestmove'), output.length);
+                const bestmove = bestmoveOutput.split(' ')[1];
+                const checkersSquare = `${ConvertAlgebraicToCheckers(bestmove[0], Number(bestmove[1]))} ${ConvertAlgebraicToCheckers(bestmove[2], Number(bestmove[3]))}`
+                res.status(200).send(checkersSquare);                    
             }
-        
         });
 
         engine.stderr.on('data', (data) => {
