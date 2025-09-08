@@ -1,8 +1,3 @@
-/* 
-    this is where i left off, i need to fix any bugs in the miniMax algorithm below
-
-    im currently fixing the getLegalMoves() function, i need to fully test out the logic before going further
-*/
 
 
 function getLegalMoves(board, playerColor) {
@@ -15,18 +10,22 @@ function getLegalMoves(board, playerColor) {
 
       const cell = board[row][col];
 
-      if (cell.startsWith(playerColor)) {
-            const moveSquares = [
-                [row + direction, col - 1],
-                [row + direction, col + 1]
-            ];
+      if (cell.includes(playerColor)) {
+            const moveSquares = {
+                leftCorner: {row: row + direction, col: col - 1},
+                rightCorner: {row: row + direction, col: col + 1},
+            } 
 
-            const jumpSquares = [
-                [row + direction + direction, col - 2],
-                [row + direction + direction, col + 2]
-            ]
-            for (const [r, c] of moveSquares) {
-                if (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === ''){
+            const jumpSquares = {
+                leftCorner: {row: row + direction + direction, col: col - 2, capture: moveSquares.leftCorner},
+                rightCorner: {row: row + direction + direction, col: col + 2, capture: moveSquares.rightCorner}
+            }
+
+            for (const square of Object.values(moveSquares)) {
+                const r = square.row;
+                const c = square.col;
+
+                if(r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === ''){
                     moves.push({
                         from: {row, col},
                         to: {row: r, col: c},
@@ -35,11 +34,16 @@ function getLegalMoves(board, playerColor) {
                 }                     
             }
 
-            for(const [r, c] of jumpSquares){
+            for(const square of Object.values(jumpSquares)){
+                const r = square.row;
+                const c = square.col;
+                const capture = square.capture;
+
                 if (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === ''){
-                    if(board[r - direction]?.[c + direction]?.includes(opposingPlayer)){
+                    if(board[capture.row]?.[capture.col]?.includes(opposingPlayer)){
+                        console.log(capture);
                         moves.push({
-                            capture: {row: r - direction, col: c + direction},
+                            capture: {...capture, pieceId: board[capture.row][capture.col]},
                             from: {row, col},
                             to: {row: r, col: c},
                             piece: cell
@@ -60,8 +64,8 @@ function evaluate(board) {
   let score = 0;
   for (const row of board) {
     for (const cell of row) {
-      if (cell.startsWith('red')) score += 1;
-      if (cell.startsWith('black')) score -= 1;
+      if (cell.includes('red')) score += 1;
+      if (cell.includes('black')) score -= 1;
     }
   }
   return score;
