@@ -1,44 +1,14 @@
 const express = require('express');
+const findBestMove = require('./Utility/CalculateBestMove');
 const router = express.Router();
-const {spawn} = require('child_process');
-const path = require('path');
-const ConvertMovesToSSN = require('./Utility/ConvertMovesToSSN');
-
 
 router.post('/ai_move', (req, res) => {
-    const {moves} = req.body;
-    const allSSNMoves = ConvertMovesToSSN(moves);
-    console.log(allSSNMoves);
- 
+    const {board} = req.body;
+
     try{
-        const enginePath = path.resolve(__dirname, './../../ChildProcess/CheckersEngine/stockfishMacOS');
-        const engine = spawn(enginePath);
-
-        engine.stdin.write('uci\n');
-        engine.stdin.write('setoption name Skill Level value 5\n');     //0 easiest, 20 strongest
-        engine.stdin.write('isready\n');    
-
-        engine.stdout.on('data', (data) => {
-            const output = data.toString();
-            if(output.includes('readyok')){
-                engine.stdin.write(`position startpos moves ${allSSNMoves}\n`);
-                engine.stdin.write('go movetime 1000\n');
-            }  
-            else if(output.includes('bestmove')){
-                const bestmove = output.slice(output.indexOf('bestmove'), output.length);
-                res.status(200).send(bestmove.split(' ')[1]);                    
-            }
-        
-        });
-
-        engine.stderr.on('data', (data) => {
-            console.error(`Error: ${data}`);
-            res.status(501).send(data);
-        });
-
-        engine.on('close', (code) => {
-            console.log(`Child exited with code ${code}`);
-        });
+        const bestMove = findBestMove(board, 5, 'black');
+        console.log(bestMove);
+        res.status(200).json(bestMove);
     }
     catch(error){
         const message = error.message;
