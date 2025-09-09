@@ -3,11 +3,10 @@ const findBestMove = require('./Utility/CalculateBestMove');
 const router = express.Router();
 
 router.post('/ai_move', (req, res) => {
-    const {board} = req.body;
+    const {board, color} = req.body;
 
     try{
-        const bestMove = findBestMove(board, 5, 'black');
-        console.log(bestMove);
+        const bestMove = findBestMove(board, 5, color);
         res.status(200).json(bestMove);
     }
     catch(error){
@@ -16,6 +15,6 @@ router.post('/ai_move', (req, res) => {
         res.status(500).send(message);
     }
 
-})
+});
 
 module.exports = router;
