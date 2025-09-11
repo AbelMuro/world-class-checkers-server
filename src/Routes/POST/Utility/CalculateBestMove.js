@@ -126,15 +126,20 @@ function applyMove(board, move) {
     if(capture)
         newBoard[capture.row][capture.column] = '';
     
-    newBoard[from.row][from.col] = '';
+    newBoard[from.row][from.col] = pieceId;
+    newBoard[to.row][to.col] = '';
+
+    /* 
     if((to.row === 7 && pieceId.includes('black')) ||
-        to.row === 0 && pieceId.includes('red'))
+        to.row === 0 && pieceId.includes('red')){
+            newBoard[from.row][from.col] = '';
             newBoard[to.row][to.col] = pieceId.includes('queen') ? pieceId : `${pieceId} queen`;
+        }
     else {
         newBoard[from.row][from.col] = '';
         newBoard[to.row][to.col] = pieceId;
     }
-        
+       */ 
     return newBoard;
 }
 
