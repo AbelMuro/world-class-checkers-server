@@ -121,15 +121,20 @@ function applyMove(board, move) {
     const from = move.from;
     const to = move.to;
     const capture = move.capture;
+    const pieceId = move.piece;
 
     if(capture)
         newBoard[capture.row][capture.column] = '';
     
-    newBoard[from.row][from.col] = move.piece;
-    newBoard[to.row][to.col] = '';
-    
-
-    // TODO: king promotion
+    newBoard[from.row][from.col] = '';
+    if((to.row === 7 && pieceId.includes('black')) ||
+        to.row === 0 && pieceId.includes('red'))
+            newBoard[to.row][to.col] = pieceId.includes('queen') ? pieceId : `${pieceId} queen`;
+    else {
+        newBoard[from.row][from.col] = '';
+        newBoard[to.row][to.col] = pieceId;
+    }
+        
     return newBoard;
 }
 
