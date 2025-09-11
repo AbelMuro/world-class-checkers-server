@@ -4,13 +4,15 @@ const cors = require('cors');
 const app = express();
 const port = 4000;
 
+
+app.use(express.json());
 app.use(cors({
-    origin: 'https://world-class-checkers.netlify.app/',
+    origin: 'https://world-class-checkers.netlify.app',
     methods: ['POST', 'GET'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }))
 
-app.use(express.json());
+
 app.use(aiMove);
 
 
