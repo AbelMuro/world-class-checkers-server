@@ -9,9 +9,9 @@ router.post('/ai_move', (req, res) => {
     if(difficulty === 'easy')
         depth = 3;
     else if(difficulty === 'medium')
-        depth = 6;
+        depth = 5;
     else
-        depth = 10;
+        depth = 7;
 
     try{
         const bestMove = findBestMove(board, depth, color);
