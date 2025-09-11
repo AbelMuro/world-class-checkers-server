@@ -2,6 +2,13 @@ const express = require('express');
 const findBestMove = require('./Utility/CalculateBestMove');
 const router = express.Router();
 
+/* 
+    this is where i left off, im getting the error 'circular reference'
+    the issue is most likely coming from the recursive function 'findBestMove' -> 'getLegalMoves' function
+    i may need to use JSON.stringify() 
+
+*/
+
 router.post('/ai_move', (req, res) => {
     const {board, color, difficulty} = req.body;
     let depth;
