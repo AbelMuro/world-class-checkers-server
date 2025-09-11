@@ -4,14 +4,23 @@ const cors = require('cors');
 const app = express();
 const port = 4000;
 
+const allowedOrigins = [
+    'https://world-class-checkers.netlify.app'
+]
 
 app.use(express.json());
 app.use(cors({
-    origin: 'https://world-class-checkers.netlify.app',
-    methods: ['POST', 'GET'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-}))
+    origin: (origin, callback) => {
+        const cleanedOrigin = origin.endsWith('/') ? origin.slice(0, origin.length - 2) : origin;
+        if(allowedOrigins.includes(cleanedOrigin))
+            callback(null, true)
+        else
+            callback(new Error('Not allowed by CORS'));
 
+    },
+    methods: ['POST', 'GET'],
+    allowedHeaders: ['Content-Type'],
+}))
 
 app.use(aiMove);
 
