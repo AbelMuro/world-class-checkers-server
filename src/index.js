@@ -11,7 +11,7 @@ const allowedOrigins = [
 app.use(express.json());
 app.use(cors({
     origin: (origin, callback) => {
-        const cleanedOrigin = origin.endsWith('/') ? origin.slice(0, origin.length - 2) : origin;
+        const cleanedOrigin = origin?.endsWith('/') ? origin.slice(0, origin.length - 2) : origin;
         if(allowedOrigins.includes(cleanedOrigin))
             callback(null, true)
         else
