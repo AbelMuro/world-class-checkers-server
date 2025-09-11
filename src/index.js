@@ -5,7 +5,7 @@ const app = express();
 const port = 4000;
 
 app.use(cors({
-    origin: '*',
+    origin: 'https://world-class-checkers.netlify.app/',
     methods: ['POST', 'GET'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }))
