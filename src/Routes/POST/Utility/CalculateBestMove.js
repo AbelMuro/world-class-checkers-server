@@ -16,7 +16,6 @@ function getLegalMoves(board, playerColor) {
                 rightCorner: {row: row + direction, col: col + 1},
             } 
 
-            /* 
             const kingMoveSquares = {
                 topLeftCorner: {row: row + 1, col: col - 1},
                 topRightCorner: {row: row + 1, col: col + 1},
@@ -30,7 +29,7 @@ function getLegalMoves(board, playerColor) {
                 bottomRightCorner: {row: row - 2, col: col + 2, capture: kingMoveSquares.bottomRightCorner}
             }                
             
-            */
+
 
 
             const jumpSquares = {
@@ -40,7 +39,7 @@ function getLegalMoves(board, playerColor) {
 
 
 
-            /* 
+
                 if(cell.includes('queen')){
                     for (const square of Object.values(kingMoveSquares)) {
                         const r = square.row;
@@ -71,9 +70,6 @@ function getLegalMoves(board, playerColor) {
                         }
                     } 
                 }            
-            
-            
-            */
 
                 for (const square of Object.values(moveSquares)) {
                     const r = square.row;
@@ -137,7 +133,6 @@ function applyMove(board, move) {
     newBoard[from.row][from.col] = pieceId;
     newBoard[to.row][to.col] = '';
 
-    /* 
     if((to.row === 7 && pieceId.includes('black')) ||
         to.row === 0 && pieceId.includes('red')){
             newBoard[from.row][from.col] = '';
@@ -147,7 +142,7 @@ function applyMove(board, move) {
         newBoard[from.row][from.col] = '';
         newBoard[to.row][to.col] = pieceId;
     }
-       */ 
+
     return newBoard;
 }
 
