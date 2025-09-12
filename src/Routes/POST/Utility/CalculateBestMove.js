@@ -34,8 +34,8 @@ function getLegalMoves(board, playerColor) {
 
 
             const jumpSquares = {
-                leftCorner: {row: row + direction + direction, col: col - 2, capture: moveSquares.leftCorner},
-                rightCorner: {row: row + direction + direction, col: col + 2, capture: moveSquares.rightCorner}
+                leftCorner: {row: row + direction + direction, col: col - 2, capture: {...moveSquares.leftCorner}},
+                rightCorner: {row: row + direction + direction, col: col + 2, capture: {...moveSquares.rightCorner}}
             }
 
 
