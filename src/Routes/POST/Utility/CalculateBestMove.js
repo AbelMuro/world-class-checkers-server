@@ -124,15 +124,8 @@ function applyMove(board, move) {
     if(capture)
         newBoard[capture.row][capture.column] = '';
 
-    if((to.row === 7 && pieceId.includes('black')) ||
-        to.row === 0 && pieceId.includes('red')){
-            newBoard[from.row][from.col] = '';
-            newBoard[to.row][to.col] = pieceId.includes('queen') ? pieceId : `${pieceId} queen`;
-        }
-    else {
-        newBoard[from.row][from.col] = '';
-        newBoard[to.row][to.col] = pieceId;
-    }
+    newBoard[from.row][from.col] = '';
+    newBoard[to.row][to.col] = pieceId;
 
     return newBoard;
 }
