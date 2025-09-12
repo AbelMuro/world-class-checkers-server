@@ -29,23 +29,17 @@ function getLegalMoves(board, playerColor) {
                 bottomRightCorner: {row: row - 2, col: col + 2, capture: kingMoveSquares.bottomRightCorner}
             }                
             
-
-
-
             const jumpSquares = {
-                leftCorner: {row: row + direction + direction, col: col - 2, capture: {...moveSquares.leftCorner}},
-                rightCorner: {row: row + direction + direction, col: col + 2, capture: {...moveSquares.rightCorner}}
+                leftCorner: {row: row + direction + direction, col: col - 2, capture: moveSquares.leftCorner},
+                rightCorner: {row: row + direction + direction, col: col + 2, capture: moveSquares.rightCorner}
             }
-
-
-
 
                 if(cell.includes('queen')){
                     for (const square of Object.values(kingMoveSquares)) {
                         const r = square.row;
                         const c = square.col;
 
-                        if(board[r][c] === ''){
+                        if(board[r]?.[c] === ''){
                             moves.push({
                                 from: {row, col},
                                 to: {row: r, col: c},
@@ -58,7 +52,7 @@ function getLegalMoves(board, playerColor) {
                         const c = square.col;
                         const capture = square.capture;
 
-                        if (board[r][c] === ''){
+                        if (board[r]?.[c] === ''){
                             if(board[capture.row]?.[capture.col]?.includes(opposingPlayer)){
                                 moves.push({
                                     capture: {...capture, pieceId: board[capture.row][capture.col]},
@@ -70,39 +64,39 @@ function getLegalMoves(board, playerColor) {
                         }
                     } 
                 }            
+                else{
+                    for (const square of Object.values(moveSquares)) {
+                        const r = square.row;
+                        const c = square.col;
 
-                for (const square of Object.values(moveSquares)) {
-                    const r = square.row;
-                    const c = square.col;
-
-                    if(r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === ''){
-                        moves.push({
-                            from: {row, col},
-                            to: {row: r, col: c},
-                            piece: cell
-                        });                    
-                    }                     
-                }
-
-                for(const square of Object.values(jumpSquares)){
-                    const r = square.row;
-                    const c = square.col;
-                    const capture = square.capture;
-
-                    if (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === ''){
-                        if(board[capture.row]?.[capture.col]?.includes(opposingPlayer)){
+                        if(r >= 0 && r < 8 && c >= 0 && c < 8 && board[r]?.[c] === ''){
                             moves.push({
-                                capture: {...capture, pieceId: board[capture.row][capture.col]},
                                 from: {row, col},
                                 to: {row: r, col: c},
                                 piece: cell
-                            })                        
-                        }
+                            });                    
+                        }                     
                     }
-                }                  
-      }
+                    for(const square of Object.values(jumpSquares)){
+                        const r = square.row;
+                        const c = square.col;
+                        const capture = square.capture;
+
+                        if (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r]?.[c] === ''){
+                            if(board[capture.row]?.[capture.col]?.includes(opposingPlayer)){
+                                moves.push({
+                                    capture: {...capture, pieceId: board[capture.row][capture.col]},
+                                    from: {row, col},
+                                    to: {row: r, col: c},
+                                    piece: cell
+                                })                        
+                            }
+                        }
+                    }                      
+                }      
+            }
+        }
     }
-  }
 
   return moves;
 }
@@ -129,9 +123,6 @@ function applyMove(board, move) {
 
     if(capture)
         newBoard[capture.row][capture.column] = '';
-    
-    newBoard[from.row][from.col] = pieceId;
-    newBoard[to.row][to.col] = '';
 
     if((to.row === 7 && pieceId.includes('black')) ||
         to.row === 0 && pieceId.includes('red')){
