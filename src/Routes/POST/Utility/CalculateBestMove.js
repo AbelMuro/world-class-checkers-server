@@ -101,12 +101,16 @@ function getLegalMoves(board, playerColor) {
   return moves;
 }
 
-function evaluate(board) {
+function evaluate(board, color) {
+  const opposingColor = color === 'red' ? 'black' : 'red';
   let score = 0;
+
   for (const row of board) {
     for (const cell of row) {
-      if (cell.includes('red')) score += 1;
-      if (cell.includes('black')) score -= 1;
+      if (cell.includes(color)) 
+        score += 1;
+      else if(cell.includes(opposingColor))
+        score -= 1;
     }
   }
   return score;
@@ -131,19 +135,21 @@ function applyMove(board, move) {
 }
 
 
-function minimax(board, depth, maximizingPlayer) {
-    if (depth === 0) 
-        return evaluate(board);
-    
+function minimax(board, depth, maximizingPlayer) {  
     const player = maximizingPlayer ? 'red' : 'black';
-    const moves = getLegalMoves(board, player);
 
+    if (depth === 0) 
+        return evaluate(board, player);
+    
+    
+    const moves = getLegalMoves(board, player);
+4
     if (maximizingPlayer) {
-        let maxEval = -Infinity;
+        let maxEval = -Infinity;               
         for (const move of moves) {
             const newBoard = applyMove(board, move);
-            const eval = minimax(newBoard, depth - 1, false);
-            maxEval = Math.max(maxEval, eval);
+            const _eval = minimax(newBoard, depth - 1, false);
+            maxEval = Math.max(maxEval, _eval);           
         }
         return maxEval;
     } 
@@ -151,8 +157,8 @@ function minimax(board, depth, maximizingPlayer) {
         let minEval = Infinity;
         for (const move of moves) {
             const newBoard = applyMove(board, move);
-            const eval = minimax(newBoard, depth - 1, true);
-            minEval = Math.min(minEval, eval);
+            const _eval = minimax(newBoard, depth - 1, true);
+            minEval = Math.min(minEval, _eval);
         }
         return minEval;
     }
@@ -165,7 +171,7 @@ function findBestMove(board, depth, playerColor) {
     for (const move of getLegalMoves(board, playerColor)) {
         if(move.capture) return move;
         const newBoard = applyMove(board, move);
-        const score = minimax(newBoard, depth - 1, false);
+        const score = minimax(newBoard, depth - 1, playerColor === 'red');
         if (score > bestScore) {
             bestScore = score;
             bestMove = move;
