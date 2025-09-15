@@ -107,9 +107,9 @@ function evaluate(board, color) {
 
   for (const row of board) {
     for (const cell of row) {
-      if (cell.includes('red')) 
+      if (cell.includes(color)) 
         score += 1;
-      if(cell.includes('black'))
+      if(cell.includes(opposingColor))
         score -= 1;
     }
   }
@@ -135,9 +135,9 @@ function applyMove(board, move) {
 }
 
 
-function minimax(board, depth, maximizingPlayer) {  
+function minimax(board, depth, maximizingPlayer, playerColor) {  
     if (depth === 0) 
-        return evaluate(board);
+        return evaluate(board, playerColor);
     
     const player = maximizingPlayer ? 'red' : 'black';    
     const moves = getLegalMoves(board, player);
@@ -146,7 +146,7 @@ function minimax(board, depth, maximizingPlayer) {
         let maxEval = -Infinity;               
         for (const move of moves) {
             const newBoard = applyMove(board, move);
-            const _eval = minimax(newBoard, depth - 1, false);
+            const _eval = minimax(newBoard, depth - 1, false, playerColor);
             maxEval = Math.max(maxEval, _eval);           
         }
         return maxEval;
@@ -155,7 +155,7 @@ function minimax(board, depth, maximizingPlayer) {
         let minEval = Infinity;
         for (const move of moves) {
             const newBoard = applyMove(board, move);
-            const _eval = minimax(newBoard, depth - 1, true);
+            const _eval = minimax(newBoard, depth - 1, true, playerColor);
             minEval = Math.min(minEval, _eval);
         }
         return minEval;
@@ -169,7 +169,7 @@ function findBestMove(board, depth, playerColor) {
     for (const move of getLegalMoves(board, playerColor)) {
         if(move.capture) return move;
         const newBoard = applyMove(board, move);
-        const score = minimax(newBoard, depth - 1, playerColor === 'red');
+        const score = minimax(newBoard, depth - 1, playerColor === 'red', playerColor);
         if (score > bestScore) {
             bestScore = score;
             bestMove = move;
