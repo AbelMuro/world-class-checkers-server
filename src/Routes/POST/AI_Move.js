@@ -16,7 +16,6 @@ router.post('/ai_move', (req, res) => {
 
     try{
         const bestMove = findBestMove(board, depth, color);
-        console.log(bestMove);
         res.status(200).json(bestMove);
     }
     catch(error){
