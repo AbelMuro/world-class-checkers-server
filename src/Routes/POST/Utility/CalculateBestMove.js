@@ -107,9 +107,9 @@ function evaluate(board, color) {
 
   for (const row of board) {
     for (const cell of row) {
-      if (cell.includes(color)) 
+      if (cell.includes('red')) 
         score += 1;
-      else if(cell.includes(opposingColor))
+      if(cell.includes('black'))
         score -= 1;
     }
   }
@@ -135,20 +135,18 @@ function applyMove(board, move) {
 }
 
 
-function minimax(board, depth, maximizingPlayer, color) {  
-    const player = maximizingPlayer ? 'red' : 'black';
-
+function minimax(board, depth, maximizingPlayer) {  
     if (depth === 0) 
-        return evaluate(board, color);
+        return evaluate(board);
     
-    
+    const player = maximizingPlayer ? 'red' : 'black';    
     const moves = getLegalMoves(board, player);
 
     if (maximizingPlayer) {
         let maxEval = -Infinity;               
         for (const move of moves) {
             const newBoard = applyMove(board, move);
-            const _eval = minimax(newBoard, depth - 1, false, color);
+            const _eval = minimax(newBoard, depth - 1, false);
             maxEval = Math.max(maxEval, _eval);           
         }
         return maxEval;
@@ -157,7 +155,7 @@ function minimax(board, depth, maximizingPlayer, color) {
         let minEval = Infinity;
         for (const move of moves) {
             const newBoard = applyMove(board, move);
-            const _eval = minimax(newBoard, depth - 1, true, color);
+            const _eval = minimax(newBoard, depth - 1, true);
             minEval = Math.min(minEval, _eval);
         }
         return minEval;
@@ -171,7 +169,7 @@ function findBestMove(board, depth, playerColor) {
     for (const move of getLegalMoves(board, playerColor)) {
         if(move.capture) return move;
         const newBoard = applyMove(board, move);
-        const score = minimax(newBoard, depth - 1, playerColor === 'red', playerColor);
+        const score = minimax(newBoard, depth - 1, playerColor === 'red');
         if (score > bestScore) {
             bestScore = score;
             bestMove = move;
